@@ -127,12 +127,13 @@ def predict_operation_time (graph, node):
     Returns:
     time - float: The predicted execution time of the node.
     """
-    
+    # print (source_nodes)
     op_name = str(node.op).split ()[0].split('.')[-1]
     if (len (source_nodes[op_name]) > 1):
         for variant in source_nodes[op_name]:
-            tf.operations [variant].checker (graph, node)
-            op_name = variant
+            if (tf.operations [variant].checker (graph, node)):
+                # print (variant)
+                op_name = variant
     # path = resource_filename('time_prediction_v5', 'data_collection/operations/'+op_name)
     # # path = 'time_prediction_v5/data_collection/operations/'+op_name
     # files = os.listdir(path)
@@ -148,7 +149,7 @@ def predict_operation_time (graph, node):
     #         if (op_checker (graph, node)):
     #             op_name = file[:-3]
     #             break
-    print (op_name)
+    # print (op_name)
     param_vals = {}
 
     if op_name not in regressions:
@@ -159,6 +160,7 @@ def predict_operation_time (graph, node):
         regressions [op_name] = reg
 
     for param in tf.operations [op_name].op_dict.keys ():
+        print ("Param:", param)
         param_vals [param] = tf.operations [op_name].op_dict [param]['getter'] (graph, node)
     
     surrogate_model = regressions[op_name]

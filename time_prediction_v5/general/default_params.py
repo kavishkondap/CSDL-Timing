@@ -38,7 +38,7 @@ def get_axis (graph, node):
     axis : int
         The axis of the input node
     """
-    print (node.op.literals['axis'])
+    print ("axis", node.op.literals['axis'])
     return len (node.op.literals['axis'])
 
 def get_num_params (graph, node):
@@ -124,6 +124,7 @@ def get_op_input_dim(node, input_num, dim):
     shape_dim (int): the specified dimension of the node
     """
     shape = node.op.dependencies[input_num].shape
+    print ("Shape", shape)
     return shape[dim]
 
 def get_sparsematmat_num_non_zero_percentage (graph, node):

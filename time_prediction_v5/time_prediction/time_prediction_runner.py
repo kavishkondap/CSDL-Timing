@@ -23,10 +23,10 @@ for i in range (1):
 
 x = np.array (preds+emps, dtype=object)
 y = np.repeat (1, len (preds)+len (emps))
-print (x.shape)
-print (y.shape)
-print (len (preds))
-print (len (emps))
+# print (x.shape)
+# print (y.shape)
+# print (len (preds))
+# print (len (emps))
 colors = list (np.repeat (10, len (preds))) + list (np.repeat (50, len (emps)))
 # print (colors.shape)
 # area = (30 * np.random.rand(N))**2  # 0 to 15 point radii

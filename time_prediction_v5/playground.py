@@ -743,49 +743,55 @@
 # print (cols)
 # reg = regression (data, cols)
 # fig = plot_regression_2d (reg[0], reg[1])
-# fig.show ()
+# # fig.show ()
 
-# PLOTTING ENDS HERE *****************************************************
-from csdl import Model, GraphRepresentation
-import csdl
-import numpy as np
-from csdl.rep.operation_node import OperationNode
+# # PLOTTING ENDS HERE *****************************************************
+# from csdl import Model, GraphRepresentation
+# import csdl
+# import numpy as np
+# from csdl.rep.operation_node import OperationNode
 
-class mult (Model):
-    def define (self):
-        num_iter = 1
-        for i in range (num_iter):
-            arr1 = self.declare_variable (str(i), np.random.rand (20000))
-            arr2 = self.declare_variable (str(i), np.random.rand (20000))
-            self.register_output ('sum' + str(i), arr1*arr2)
+# class mult (Model):
+#     def define (self):
+#         num_iter = 1
+#         for i in range (num_iter):
+#             arr1 = self.declare_variable (str(i), np.random.rand (20000))
+#             arr2 = self.declare_variable (str(i), np.random.rand (20000))
+#             self.register_output ('sum' + str(i), arr1*arr2)
 
-class exp (Model):
-    def define (self):
-        num_iter = 1
-        for i in range (num_iter):
-            arr1 = self.declare_variable (str(i), np.random.rand (20000))
-            arr2 = self.declare_variable (str(i), np.random.rand (20000))
-            self.register_output ('sum' + str(i), arr1**arr2)
+# class exp (Model):
+#     def define (self):
+#         num_iter = 1
+#         for i in range (num_iter):
+#             arr1 = self.declare_variable (str(i), np.random.rand (20000))
+#             arr2 = self.declare_variable (str(i), np.random.rand (20000))
+#             self.register_output ('sum' + str(i), arr1**arr2)
 
-class constexp (Model):
-    def define (self):
-        num_iter = 1
-        for i in range (num_iter):
-            arr1 = self.declare_variable (str(i), np.random.rand (20000))
-            arr2 = self.declare_variable (str(i), np.random.rand (20000))
-            self.register_output ('sum' + str(i), arr1*arr2**2)
+# class constexp (Model):
+#     def define (self):
+#         num_iter = 1
+#         for i in range (num_iter):
+#             arr1 = self.declare_variable (str(i), np.random.rand (20000))
+#             arr2 = self.declare_variable (str(i), np.random.rand (20000))
+#             self.register_output ('sum' + str(i), arr1*arr2**2)
 
-class constbase (Model):
-    def define (self):
-        num_iter = 1
-        for i in range (num_iter):
-            arr1 = self.declare_variable (str(i), np.random.rand (20000))
-            arr2 = self.declare_variable (str(i), np.random.rand (20000))
-            self.register_output ('sum' + str(i), 2**arr1)
-model = constexp ()
-rep = GraphRepresentation(model)
-graph = rep.flat_graph
-for node in graph:
-    if isinstance (node, OperationNode):
-        op_name = str(node.op).split ()[0].split('.')[-1]
-        print (op_name)
+# class constbase (Model):
+#     def define (self):
+#         num_iter = 1
+#         for i in range (num_iter):
+#             arr1 = self.declare_variable (str(i), np.random.rand (20000))
+#             arr2 = self.declare_variable (str(i), np.random.rand (20000))
+#             self.register_output ('sum' + str(i), 2**arr1)
+# model = constexp ()
+# rep = GraphRepresentation(model)
+# graph = rep.flat_graph
+# for node in graph:
+#     if isinstance (node, OperationNode):
+#         op_name = str(node.op).split ()[0].split('.')[-1]
+#         print (op_name)
+import scipy.sparse
+dim1 = 1000
+dim2 = 1000
+nnz = 5
+arr = scipy.sparse.random(dim1, dim2, nnz * 0.01, format='csr')
+print (arr.shape)
