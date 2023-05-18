@@ -14,6 +14,7 @@ from importlib import import_module
 from pkg_resources import resource_filename
 from time_prediction_v5.data_collection.tf_builder import tf
 
+print ("call top")
 regressions = {}
 source_nodes = tf.get_source_nodes ()
 
@@ -132,24 +133,7 @@ def predict_operation_time (graph, node):
     if (len (source_nodes[op_name]) > 1):
         for variant in source_nodes[op_name]:
             if (tf.operations [variant].checker (graph, node)):
-                # print (variant)
                 op_name = variant
-    # path = resource_filename('time_prediction_v5', 'data_collection/operations/'+op_name)
-    # # path = 'time_prediction_v5/data_collection/operations/'+op_name
-    # files = os.listdir(path)
-    # files = [f for f in files if os.path.isfile(path+'/'+f)] 
-    # if (len (files)>=2):
-    #     for file in files:
-    #         import_statement = os.path.join(path, file) [:-3].replace ('\\', '/').replace ('/', '.')
-    #         import_statement = import_statement [import_statement.index ('time_prediction_v5'):]
-    #         try:
-    #             op_checker = getattr(import_module(import_statement), "op_checker")
-    #         except:
-    #             raise TypeError ("No module named ", import_statement, ". File must have an attribute named DataCollector")
-    #         if (op_checker (graph, node)):
-    #             op_name = file[:-3]
-    #             break
-    # print (op_name)
     param_vals = {}
 
     if op_name not in regressions:
@@ -162,11 +146,12 @@ def predict_operation_time (graph, node):
     for param in tf.operations [op_name].op_dict.keys ():
         print ("Param:", param)
         param_vals [param] = tf.operations [op_name].op_dict [param]['getter'] (graph, node)
-    
+        print (param, param_vals[param])
     surrogate_model = regressions[op_name]
     paramsList = []
     for key, value in param_vals.items():
         paramsList.append (value)
-    
+    print ('params list', np.array (paramsList))
     time = surrogate_model.predict_values (np.array ([paramsList]))
+    print (time)
     return time

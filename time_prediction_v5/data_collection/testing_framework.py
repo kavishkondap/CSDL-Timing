@@ -21,6 +21,7 @@ class TestingFramework ():
         self.operations [op.op_name] = op
 
     def get_source_nodes (self):
+        print ("source nodes")
         source_nodes = {}
         for op in self.operations.values ():
             if op.source_node in source_nodes:

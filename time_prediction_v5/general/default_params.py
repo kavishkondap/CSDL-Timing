@@ -142,4 +142,18 @@ def get_sparsematmat_num_non_zero_percentage (graph, node):
     nnz: int
         The percentage of nonzero elements in the sparse matrix
     """
-    return len(node.op.literals['sparse_mat'].nonzero())/get_size (graph, node)*100
+    return len(node.op.literals['sparse_mat'].nonzero())/node.op.literals ['sparse_mat'].size*100
+
+
+def get_sparsematvec_num_non_zero_percentage (graph, node):
+    # print (len(node.op.literals['sparsemtx'].nonzero())/get_size (graph, node)*100)
+    print ('size', np.prod (node.op.literals ['sparsemtx'].shape))
+    print ('whole thing', node.op.literals['sparsemtx'].nnz/np.prod (node.op.literals ['sparsemtx'].shape)*100)
+    # print ()
+    return node.op.literals['sparsemtx'].nnz/np.prod (node.op.literals ['sparsemtx'].shape)*100
+
+def get_sparsematvec_dim1 (graph, node):
+    return node.op.literals['sparsemtx'].shape [0]
+
+def get_sparsematvec_dim2 (graph, node):
+    return node.op.literals['sparsemtx'].shape [1]

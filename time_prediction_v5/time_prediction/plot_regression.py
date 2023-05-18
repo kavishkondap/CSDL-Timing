@@ -78,3 +78,7 @@ def plot_regression_3d (xt, interp):
     # ax.plot_surface(np.array (params))
     ax.set_visible(True)
     plt.show()
+
+def plot_regression_4d (xt, interp):
+    pass
+    #matrix plot

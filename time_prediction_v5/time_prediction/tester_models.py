@@ -51,8 +51,9 @@ class SparseMatVecTester (Model):
     def define (self):
         
         vec = self.create_input ('vec', np.ones ((5000)))
-        for i in range (9):
-            self.register_output (str(i), csdl.matvec (scipy.sparse.random(5000, 5000, 4 * 0.01, format='csr'), vec))
+        mat = scipy.sparse.random(5000, 5000, 4 * 0.01, format='csr')
+        for i in range (64):
+            self.register_output (str(i), csdl.matvec (mat, vec))
 class MatMatTester (Model):
     def define (self):
         mat = self.create_input ('mat1', np.random.rand (263, 82))
