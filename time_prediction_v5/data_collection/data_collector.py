@@ -19,6 +19,7 @@ class DataCollector(Model):
             if (arg[1]): # arg is a tuple (value, csdl_variable = True/False)
                 # print (i, arg[0])
                 args [i] = self.declare_variable ("input_" + str(i), arg[0])
+                # print (arg[0])
             else:
                 args [i] = arg[0] #getting rid of the csdl_variable part of the args value, just keeping the variable itself
         # print (args)
