@@ -3,7 +3,7 @@ from time_prediction_v5.data_collection.operation import Operation
 import scipy.sparse
 import numpy as np
 import csdl
-from time_prediction_v5.general.default_params import get_size, get_var1_dim1, get_var1_dim2, get_var2_dim2, get_sparsematmat_num_non_zero_percentage, get_sparsematvec_num_non_zero_percentage, get_sparsematvec_dim1, get_sparsematvec_dim2, get_num_params
+from time_prediction_v5.general.default_params import get_size, get_var1_dim1, get_var1_dim2, get_var2_dim2, get_sparsematmat_num_non_zero_percentage, get_sparsematvec_num_non_zero_percentage, get_sparsematvec_dim1, get_sparsematvec_dim2, get_num_params, get_sparsematmat_dim1, get_sparsematmat_dim2
 
 tf = TestingFramework ()
 
@@ -122,8 +122,15 @@ op.add_func(lambda mtx1, mtx2: csdl.matmat(mtx1, mtx2))
 tf.add_operation(op)
 
 #matmat sparse: based on the nnz, and the dimensions of the nonsparse matrix
-
-
+op = Operation('sparsematmat', num_iter=32)
+op.add_parameter('dim1', range (100, 400, 100), get_sparsematmat_dim1)
+op.add_parameter('dim2', range (100, 400, 100), get_var1_dim1)
+op.add_parameter('dim3', range (100, 400, 100), get_var1_dim2)
+op.add_parameter('nnz', range(1, 10, 2), get_sparsematmat_num_non_zero_percentage)
+op.add_argument('mtx', lambda dim1, dim2, dim3, nnz: np.ones((dim2, dim3)))
+op.add_argument('sparse_mtx', lambda dim1, dim2, dim3, nnz: scipy.sparse.random(dim1, dim2, nnz * 0.01, format='csr'), csdl_var=False)
+op.add_func(lambda mtx, sparse_mtx: csdl.sparsematmat(mtx, sparse_mtx))
+tf.add_operation(op)
 
 # op = Operation('min_multiple', num_iter=256)
 # op.add_parameter('size', range (1000, 25000, 1000), get_size)
@@ -138,6 +145,13 @@ tf.add_operation(op)
 # op.add_argument('arr', lambda size: np.ones ((size)))
 # op.add_func(lambda arr: csdl.min(arr))
 # op.add_checker ('min', lambda graph, node: graph.in_degree (node)==1)
+# tf.add_operation(op)
+
+# op = Operation('sum', num_iter=256)
+# op.add_parameter('size', [i for i in range (100, 20000, 100)], get_size)
+# op.add_parameter('num_params', [i for i in range (2, 10)], get_num_params)
+# op.add_argument('arr_list', lambda size, num_params: [np.ones ((size)) for i in range (num_params)])
+# op.add_func(lambda arr_list: csdl.sum (*arr_list))
 # tf.add_operation(op)
 
 op = Operation('power_combination_exponent', num_iter=512)

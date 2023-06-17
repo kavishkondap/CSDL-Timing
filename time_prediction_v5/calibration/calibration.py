@@ -1,4 +1,4 @@
-from time_prediction_v5.data_collection.obsolete.data_collection_runner import data_collection_runner
+from time_prediction_v5.data_collection.tf_builder import tf
 import pandas as pd
 import numpy as np
 from pkg_resources import resource_filename
@@ -20,7 +20,7 @@ def partial_calibration ():
     - No Return
   
     """
-    local_df = data_collection_runner (['linear_combination'], save=False)
+    local_df = tf.run (to_include=['linear_combination'], save=False)
     path =  resource_filename('time_prediction_v5', 'data/linear_combination.csv')
     gen_df = pd.read_csv (path)
     ratios = []
@@ -51,7 +51,7 @@ def complete_calibration ():
     - No Return
   
     """
-    data_collection_runner ('all')
+    tf.run()
     path = resource_filename('time_prediction_v5', 'calibration/calibration_const.txt')
     with open(path, 'w') as f:
         f.write(str(1))

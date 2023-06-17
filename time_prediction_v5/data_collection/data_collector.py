@@ -13,6 +13,7 @@ class DataCollector(Model):
         func = self.parameters['func']
         num_iter = self.parameters['num_iter']
         args = self.parameters ['args']
+        print (args)
         # print (np.asarray (args).shape)
         # print (args)
         for i, arg in enumerate (args):
@@ -22,7 +23,7 @@ class DataCollector(Model):
                 # print (arg[0])
             else:
                 args [i] = arg[0] #getting rid of the csdl_variable part of the args value, just keeping the variable itself
-        # print (args)
+        print (args)
         # parameters_dict = self.parameters['parameters_dict']
 
         # shapes = parameters_dict['shapes']

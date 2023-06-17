@@ -91,7 +91,7 @@ class tanhSum (Model):
 
 class eoioTester (Model):
     def define (self):
-        num_iter = 1000
+        num_iter = 1004
         for i in range (num_iter):
             arr1 = self.declare_variable (str(i), np.random.rand (200))
             arr2 = self.declare_variable (str (i)+'arr2', np.random.rand (200))

@@ -38,27 +38,34 @@ def predict_time(rep, manual_wait_time = 0.005):
     """
     graph = rep.flat_graph
     total_time = 0
+    if (os.path.isfile ('./timing/cache.csv')):
+        df = pd.read_csv ("./timing/cache.csv")
+    else:
+        if not os.path.isdir ('./timing'):
+            os.mkdir ('./timing')
+        pre_saved=False
+        template = {'hash':[],
+                    'time':[]}
+        df = pd.DataFrame (template)
+        df.to_csv ('./timing/cache.csv', index=False, columns=['hash', 'time'])
     for node in graph:
        if isinstance (node, OperationNode):
             op_name = str(node.op).split ()[0].split('.')[-1]
             if (op_name in source_nodes):
                 time = predict_operation_time (graph, node)
             else:
-                time = predict_manual_time (rep, node, manual_wait_time)
+                time, df = predict_manual_time (rep, node, df, manual_wait_time)
             node.execution_time = time
             if not time <=0:
                 total_time += time
-    # adjusting for calibration
+    print (df)
+    df.to_csv('./timing/cache.csv', mode='a', index=False, header=False)
     filepath = resource_filename('time_prediction_v5', 'calibration/calibration_const.txt')
     with open(filepath) as f:
         calibration_const = int (f.readline())
     return total_time*calibration_const
 
-# def predict_crossover_time (node):
-    
-#     pass
-
-def predict_manual_time (rep, node, manual_wait_time):
+def predict_manual_time (rep, node, df, manual_wait_time):
 
     """
     Predicts the execution time of a given node in a computation graph by either retrieving it from a cache file or computing it manually.
@@ -75,24 +82,14 @@ def predict_manual_time (rep, node, manual_wait_time):
     # node_hash = sha256 (pickle.dumps (node)).hexdigest ()
     # node_hash = repr (node)
     node_hash = str(node.name)
-    if (os.path.isfile ('./timing/cache.csv')):
-        df = pd.read_csv ("./timing/cache.csv")
-        pre_saved = node_hash in list (df['hash'])
-    else:
-        if not os.path.isdir ('./timing'):
-            os.mkdir ('./timing')
-        pre_saved=False
-        template = {'hash':[],
-                    'time':[]}
-        df = pd.DataFrame (template)
-        df.to_csv ('./timing/cache.csv', index=False, columns=['hash', 'time'])
-
+    # print (node.op)
+    pre_saved = node_hash in list (df['hash'])
     if (pre_saved):
         t = df ['time'][list (df['hash']).index (node_hash)]
         print (t)
         print ("used cache")
     else:
-        print ("predicting manual time for: ", str(node.op).split ()[0].split('.')[-1])
+        # print ("predicting manual time for: ", str(node.op).split ()[0].split('.')[-1])
         rep2 = copy(rep)
         rep2.flat_graph = nx.DiGraph()
         rep2.flat_graph.add_node(node)
@@ -108,14 +105,18 @@ def predict_manual_time (rep, node, manual_wait_time):
             total_time+=sim.run ()
             num_iters+=1
         t = total_time/num_iters
+        if (t<=1e-6):
+            t = 1e-6
         data = {'hash':[node_hash],
                 'time':[t]}
-        df = pd.DataFrame(data)
-        df.to_csv('./timing/cache.csv', mode='a', index=False, header=False)
+        df2 = pd.DataFrame(data)
+        # pd.concat (df, df2)
+        # df.append (data, ignore_index = True)
+        df = pd.concat ([df, df2], ignore_index=True)
         del (rep2)
         del (sim)
         gc.collect()
-    return t
+    return t, df
 
 def predict_operation_time (graph, node):
     """

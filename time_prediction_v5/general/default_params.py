@@ -157,3 +157,9 @@ def get_sparsematvec_dim1 (graph, node):
 
 def get_sparsematvec_dim2 (graph, node):
     return node.op.literals['sparsemtx'].shape [1]
+
+def get_sparsematmat_dim1 (graph, node):
+    return node.op.literals['sparse_mat'].shape [0]
+
+def get_sparsematmat_dim2 (graph, node):
+    return node.op.literals['sparse_mat'].shape [1]

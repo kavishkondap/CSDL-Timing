@@ -807,48 +807,58 @@ import numpy as np
 # scores = np.zeros ((5))
 # sum = choices.sum ()
 # for i in range (5):
-#     scores[i] = (50-sum) * choices[i]
-# print (scores)
-import numpy as np
-import matplotlib.pyplot as plt
-mass = 1
-k = 4.38649
-init_pos = 1
-init_vel = 0
-delta_t = 0.02
-init_time = 0
+# #     scores[i] = (50-sum) * choices[i]
+# # print (scores)
+# import numpy as np
+# import matplotlib.pyplot as plt
+# mass = 1
+# k = 4.38649
+# init_pos = 1
+# init_vel = 0
+# delta_t = 0.02
+# init_time = 0
 
-def pos (x_nought, vel, acc, delta_t):
-    return x_nought + vel*delta_t + 1/2*acc*(delta_t)**2
-def vel (vel_nought, delta_t, acc):
-    return vel_nought + acc*delta_t
-def acc (mass, pos, k):
-    return -pos*k/mass
-def time (time, delta_t):
-    return time+delta_t
+# def pos (x_nought, vel, acc, delta_t):
+#     return x_nought + vel*delta_t + 1/2*acc*(delta_t)**2
+# def vel (vel_nought, delta_t, acc):
+#     return vel_nought + acc*delta_t
+# def acc (mass, pos, k):
+#     return -pos*k/mass
+# def time (time, delta_t):
+#     return time+delta_t
 
-pos_list = [init_pos]
-vel_list = [init_vel]
-acc_list = [acc (mass, init_pos, k)]
-time_list = [init_time]
+# pos_list = [init_pos]
+# vel_list = [init_vel]
+# acc_list = [acc (mass, init_pos, k)]
+# time_list = [init_time]
 
-while time_list[-1]<13:
-    new_time = time (time_list[-1], delta_t)
-    new_pos = pos (pos_list[-1], vel_list[-1], acc_list [-1], delta_t)
-    new_vel = vel (vel_list[-1], delta_t, acc_list [-1])
-    new_acc = acc (mass, pos_list [-1], k)
+# while time_list[-1]<13:
+#     new_time = time (time_list[-1], delta_t)
+#     new_pos = pos (pos_list[-1], vel_list[-1], acc_list [-1], delta_t)
+#     new_vel = vel (vel_list[-1], delta_t, acc_list [-1])
+#     new_acc = acc (mass, pos_list [-1], k)
 
-    pos_list.append (new_pos)
-    vel_list.append (new_vel)
-    acc_list.append (new_acc)
-    time_list.append (new_time)
+#     pos_list.append (new_pos)
+#     vel_list.append (new_vel)
+#     acc_list.append (new_acc)
+#     time_list.append (new_time)
 
-print (time_list)
-print (pos_list)
-print (vel_list)
-print (acc_list)
+# print (time_list)
+# print (pos_list)
+# print (vel_list)
+# print (acc_list)
 
-plt.scatter (time_list, pos_list, color = 'r')
-plt.scatter (time_list, vel_list, color = 'g')
-plt.scatter (time_list, acc_list, color = 'b')
-plt.show ()
+# plt.scatter (time_list, pos_list, color = 'r')
+# plt.scatter (time_list, vel_list, color = 'g')
+# plt.scatter (time_list, acc_list, color = 'b')
+# plt.show ()
+
+# import pandas as pd
+# import numpy as np
+
+# df = pd.read_csv ('C:/Users/kavis/Desktop/KAVISH/General Stuff/CSDL Work/Time Prediction/time_predictionV5/timing/cache.csv')
+# time = np.array (df['time'])
+# print (np.min (time))
+
+from time_prediction_v5.calibration.calibration import partial_calibration
+partial_calibration ()

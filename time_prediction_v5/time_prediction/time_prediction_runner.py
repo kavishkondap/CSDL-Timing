@@ -5,7 +5,7 @@ from  python_csdl_backend import Simulator
 import matplotlib.pyplot as plt
 import numpy as np
 
-model = SparseMatVecTester ()
+model = eoioTester ()
 rep = GraphRepresentation(model)
 preds = []
 emps = []
