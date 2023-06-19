@@ -1,5 +1,7 @@
 import numpy as np
 from csdl.rep.operation_node import OperationNode
+from csdl.lang.standard_operation import StandardOperation
+from csdl.lang.custom_explicit_operation import CustomExplicitOperation
 import pickle
 from copy import copy
 import networkx as nx
@@ -13,6 +15,7 @@ import os
 from importlib import import_module
 from pkg_resources import resource_filename
 from time_prediction_v5.data_collection.tf_builder import tf
+import time
 
 regressions = {}
 source_nodes = tf.get_source_nodes ()
@@ -40,10 +43,26 @@ def predict_time(rep, manual_wait_time = 0.005):
     for node in graph:
        if isinstance (node, OperationNode):
             op_name = str(node.op).split ()[0].split('.')[-1]
-            if (op_name in source_nodes):
-                time = predict_operation_time (graph, node)
+
+            if isinstance(node.op, StandardOperation):
+                # print('OP')
+                time = 1e-5
+            elif isinstance(node.op, CustomExplicitOperation):
+                time = 1e-4
             else:
-                time = predict_manual_time (rep, node, manual_wait_time)
+                # print('NOT OP')
+                time = 1e-1
+
+            # if (op_name in source_nodes):
+            #     time = predict_operation_time (graph, node)
+            # else:
+            #     if isinstance(node.op, StandardOperation):
+            #         # print('OP')
+            #         time = 1e-5
+            #     else:
+            #         # print('NOT OP')
+            #         time = 1e-1
+                # time = predict_manual_time (rep, node, manual_wait_time)
             node.execution_time = time
             if not time <=0:
                 total_time += time
@@ -88,10 +107,10 @@ def predict_manual_time (rep, node, manual_wait_time):
 
     if (pre_saved):
         t = df ['time'][list (df['hash']).index (node_hash)]
-        print (t)
-        print ("used cache")
+        # print (t)
+        # print ("used cache")
     else:
-        print ("predicting manual time for: ", str(node.op).split ()[0].split('.')[-1])
+        # print ("predicting manual time for: ", str(node.op).split ()[0].split('.')[-1])
         rep2 = copy(rep)
         rep2.flat_graph = nx.DiGraph()
         rep2.flat_graph.add_node(node)
@@ -104,7 +123,9 @@ def predict_manual_time (rep, node, manual_wait_time):
         total_time = 0
         while total_time <=manual_wait_time: #make this adaptive, num_iters <= 5 or 
             # print (num_iters, total_time)
-            total_time+=sim.run ()
+            s = time.time()
+            sim.run ()
+            total_time+= (time.time() - s)
             num_iters+=1
         t = total_time/num_iters
         data = {'hash':[node_hash],
@@ -114,6 +135,7 @@ def predict_manual_time (rep, node, manual_wait_time):
         del (rep2)
         del (sim)
         gc.collect()
+        print('manual')
     return t
 
 def predict_operation_time (graph, node):
@@ -160,7 +182,7 @@ def predict_operation_time (graph, node):
         regressions [op_name] = reg
 
     for param in tf.operations [op_name].op_dict.keys ():
-        print ("Param:", param)
+        # print ("Param:", param)
         param_vals [param] = tf.operations [op_name].op_dict [param]['getter'] (graph, node)
     
     surrogate_model = regressions[op_name]

@@ -90,7 +90,11 @@ def get_var1_dim2 (graph, node):
     var1_dim2: int
         The second dimension of the first input
     """
-    return get_op_input_dim(node, 0,1)
+    try:
+        return get_op_input_dim(node, 0,1)
+    except:
+        return 10
+
 
 def get_var2_dim2 (graph, node):
     """
@@ -142,4 +146,5 @@ def get_sparsematmat_num_non_zero_percentage (graph, node):
     nnz: int
         The percentage of nonzero elements in the sparse matrix
     """
+    return 0.01
     return len(node.op.literals['sparse_mat'].nonzero())/get_size (graph, node)*100
