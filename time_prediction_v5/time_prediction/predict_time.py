@@ -40,18 +40,29 @@ def predict_time(rep, manual_wait_time = 0.005):
     """
     graph = rep.flat_graph
     total_time = 0
+    i = 0
     for node in graph:
        if isinstance (node, OperationNode):
             op_name = str(node.op).split ()[0].split('.')[-1]
 
-            if isinstance(node.op, StandardOperation):
+            # UNCOMMENT:
+            # print(source_nodes)
+            # exit()
+            # if (op_name in source_nodes):
+            #     i+=1
+            #     time = predict_operation_time (graph, node)
+            #     print(f"{i} PREDICT {op_name}")
+
+
+            elif isinstance(node.op, StandardOperation):
                 # print('OP')
                 time = 1e-5
             elif isinstance(node.op, CustomExplicitOperation):
-                time = 1e-4
+                # time = 1e-5
+                time = predict_manual_time (rep, node, manual_wait_time)
             else:
                 # print('NOT OP')
-                time = 1e-1
+                # time = 1e-1
 
             # if (op_name in source_nodes):
             #     time = predict_operation_time (graph, node)
@@ -62,7 +73,7 @@ def predict_time(rep, manual_wait_time = 0.005):
             #     else:
             #         # print('NOT OP')
             #         time = 1e-1
-                # time = predict_manual_time (rep, node, manual_wait_time)
+                time = predict_manual_time (rep, node, manual_wait_time)
             node.execution_time = time
             if not time <=0:
                 total_time += time
@@ -93,8 +104,11 @@ def predict_manual_time (rep, node, manual_wait_time):
     # node_hash = sha256 (pickle.dumps (node)).hexdigest ()
     # node_hash = repr (node)
     node_hash = str(node.name)
-    if (os.path.isfile ('./timing/cache.csv')):
-        df = pd.read_csv ("./timing/cache.csv")
+
+    cache_name = f'{rep.name}_cache.csv'
+
+    if (os.path.isfile (f'./timing/{cache_name}')):
+        df = pd.read_csv (f"./timing/{cache_name}")
         pre_saved = node_hash in list (df['hash'])
     else:
         if not os.path.isdir ('./timing'):
@@ -103,7 +117,7 @@ def predict_manual_time (rep, node, manual_wait_time):
         template = {'hash':[],
                     'time':[]}
         df = pd.DataFrame (template)
-        df.to_csv ('./timing/cache.csv', index=False, columns=['hash', 'time'])
+        df.to_csv (f'./timing/{cache_name}', index=False, columns=['hash', 'time'])
 
     if (pre_saved):
         t = df ['time'][list (df['hash']).index (node_hash)]
@@ -117,6 +131,7 @@ def predict_manual_time (rep, node, manual_wait_time):
         rep2.flat_graph.add_edges_from (rep.flat_graph.in_edges (node))
         rep2.flat_graph.add_edges_from (rep.flat_graph.out_edges (node))
 
+        rep2.objective = None
         sim = Simulator(rep2)
         sim.run ()
         num_iters = 0
@@ -131,7 +146,7 @@ def predict_manual_time (rep, node, manual_wait_time):
         data = {'hash':[node_hash],
                 'time':[t]}
         df = pd.DataFrame(data)
-        df.to_csv('./timing/cache.csv', mode='a', index=False, header=False)
+        df.to_csv(f'./timing/{cache_name}', mode='a', index=False, header=False)
         del (rep2)
         del (sim)
         gc.collect()
